@@ -1,0 +1,125 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>edu.utexas.tacc.tapis</groupId>
+  <artifactId>client-demo-java</artifactId>
+  <version>0.0.1</version>
+
+  <!--  Simple project showing use of Tokens and Tenants client
+        A shaded fat jar is built that can be executed using the java command.
+        Requires Java 13.
+        To execute run
+           mvn clean package
+           java -jar target/client-demo-java-0.0.1.jar
+   -->
+
+    <name>Tapis java client integration demo</name>
+  <description>Simple project showing use of Tokens and Tenants clients</description>
+  <organization>
+    <name>TACC</name>
+    <url>http://tacc.utexas.edu</url>
+  </organization>
+
+  <!-- *** Source code control *** -->
+  <scm>
+    <connection>scm:git:https://github.com/tapis-project/client-demo-java.git</connection>
+    <url>https://github.com/tapis-project/client-demo-java</url>
+  </scm>
+
+  <!-- *** Properties *** -->
+  <properties>
+    <tapis-client-java.version>1.1-SNAPSHOT</tapis-client-java.version>
+    <!-- Java version -->
+    <java-source.version>1.13</java-source.version>
+    <java-target.version>1.13</java-target.version>
+    <!-- Maven plugin related properties -->
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-compiler-plugin-release>13</maven-compiler-plugin-release>
+    <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
+    <maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
+    <!-- Source encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <repositories>
+    <!-- Include snapshot repo since currently that is where client packages reside -->
+    <repository>
+      <id>oss.sonatype.org-snapshot</id>
+      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tokens-client</artifactId>
+      <version>${tapis-client-java.version}</version>
+    </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>tenants-client</artifactId>
+        <version>${tapis-client-java.version}</version>
+      </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <plugins>
+
+      <!-- *** Compile the code *** -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <!-- The release tells maven what version of the Java compiler to use internally. -->
+          <release>${maven-compiler-plugin-release}</release>
+          <source>${java-source.version}</source>
+          <target>${java-target.version}</target>
+        </configuration>
+      </plugin>
+
+      <!-- *** Create executable jar *** -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin.version}</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>edu.utexas.tacc.tapis.client.demo.ClientDemo</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <!-- *** Create shaded fat jar for standalone execution *** -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${maven-shade-plugin.version}</version>
+        <configuration>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
